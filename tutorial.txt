@@ -1,7 +1,0 @@
-Electron Tutorial
-
-Documentação:
-https://www.electronjs.org/pt/docs/latest/
-
-Material de Apoio:
-@ProfessorJosedeAssis (Youtube - Procurar Playlist Electron Tutorial)
