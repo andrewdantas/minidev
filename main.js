@@ -4,7 +4,7 @@ console.log("Processo Principal")
 // nativeTheme (forçar um tema no sistema operacional)
 // Menu (criar um menu personalizado)
 // shell (acessar links externos)
-const { app, BrowserWindow, nativeTheme, Menu, shell, ipcMain} = require('electron/main')
+const { app, BrowserWindow, nativeTheme, Menu, shell, ipcMain } = require('electron/main')
 const path = require('node:path')
 
 // Janela Principal
@@ -21,19 +21,19 @@ function createWindow() {
 
     // Menu personalizado
     Menu.setApplicationMenu(Menu.buildFromTemplate(template))
-    
+
     win.loadFile('./src/views/index.html')
 }
 
 // Janela Sobre
-function aboutWindow () {
+function aboutWindow() {
     nativeTheme.themeSource = "dark"
     // A linha abaixo obtem a janela principal
     const main = BrowserWindow.getFocusedWindow()
     let about
     // Validar a janela pai
     if (main) {
-        about = new BrowserWindow ({
+        about = new BrowserWindow({
             width: 320,
             height: 160,
             autoHideMenuBar: true, // Esconder o menu
@@ -45,9 +45,9 @@ function aboutWindow () {
             webPreferences: {
                 preload: path.join(__dirname, 'preload.js')
             }
-         })
+        })
     }
-    
+
     about.loadFile('./src/views/sobre.html')
 
     // Fechar a janela quando receber mensagem do processo de renderização.
@@ -87,7 +87,8 @@ const template = [
         submenu: [
             {
                 label: 'Novo',
-                accelerator: 'CmdOrCtrl+N'
+                accelerator: 'CmdOrCtrl+N',
+                click: () => novoArquivo()
             },
 
             {
@@ -96,7 +97,7 @@ const template = [
             },
             {
                 label: 'Salvar',
-                accelerator: 'CmdOrCtrl+S'
+                accelerator: 'CmdOrCtrl+S',
             },
             {
                 label: 'Salvar Como',
@@ -152,17 +153,17 @@ const template = [
         label: 'Zoom',
         submenu: [
             {
-                label:'Aplicar zoom',
+                label: 'Aplicar zoom',
                 role: 'zoomIn'
             },
 
             {
-                label:'Reduzir',
+                label: 'Reduzir',
                 role: 'zoomOut'
             },
 
             {
-                label:'Restaurar o zoom padrão',
+                label: 'Restaurar o zoom padrão',
                 role: 'resetZoom'
             },
         ]
@@ -172,35 +173,42 @@ const template = [
         label: 'Cor',
         submenu: [
             {
-                label:'Azul'
+                label: 'Amarelo',
+                click: () => win.webContents.send('set-color', "var(--amarelo)")
             },
 
             {
-                label:'Amarelo'
+                label: 'Azul',
+                click: () => win.webContents.send('set-color', "var(--azul)")
             },
 
             {
-                label:'Laranja'
+                label: 'Laranja',
+                click: () => win.webContents.send('set-color', "var(--laranja)")
             },
 
             {
-                label:'Pink'
+                label: 'Pink',
+                click: () => win.webContents.send('set-color', "var(--pink)")
             },
 
             {
-                label:'Roxo'
+                label: 'Roxo',
+                click: () => win.webContents.send('set-color', "var(--roxo)")
             },
 
             {
-                label:'Verde'
+                label: 'Verde',
+                click: () => win.webContents.send('set-color', "var(--verde)")
             },
 
             {
-                type:'separator'
+                type: 'separator'
             },
 
             {
-                label:'Restaurar a cor padrão'
+                label: 'Restaurar a cor padrão',
+                click: () => win.webContents.send('set-color', "var(--cinzaClaro)")
             }
         ]
     },
@@ -215,8 +223,26 @@ const template = [
 
             {
                 label: 'Sobre',
-                click: () => aboutWindow() 
+                click: () => aboutWindow()
             }
         ]
     }
 ]
+
+// Novo arquivo >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+// Passo 1: Criar a estrtura de um arquivo e setar o título
+// Um arquivo inicia sem título, sem conteúdo, não está salvo e o local padrão vai ser a documentos
+function novoArquivo() {
+    file = {
+        name: "Sem título",
+        content: "",
+        saved: false,
+        path: app.getPath('documents') + 'Sem título'
+    }
+    // console.log(file)
+
+    // enviar ao renderizador a estrtura de um novo arquivo e título
+    win.webContents.send('set-file', file)
+}
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
